@@ -1,0 +1,69 @@
+// Loading library
+#include <LiquidCrystal.h>
+
+// Initialising variables for LCD 
+int en = 9, rs = 8, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
+LiquidCrystal lcd(rs,en,d4,d5,d6,d7); // Naming LCD
+int V0 = 10;
+
+// Initialising variables for motor driver
+int enAB = 11,in1 = 13,in2 = 12, in3 = 3, in4 = 2;
+
+// Initialising variable for program
+int counter;
+
+// setup() START
+void setup()
+{
+  // Assigning Arduino pins
+  // Assigning motor pins
+  pinMode(enAB, OUTPUT); // Enable A and Enable B are connected
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+  // Assigning LCD pins
+  lcd.begin(16,2);
+  analogWrite(V0,255);
+  // Setup
+  counter = 0;
+}
+// setup() END
+
+// loop() START
+void loop()
+{
+  // Print time every 1s while moving forward until 10s is reached
+  lcd.clear(); // Clear LCD screen
+  if (counter < 10) {
+    moveForward();
+    counter++;
+    lcd.print("Time: ");
+    lcd.print(counter);
+    delay(1000); // Wait for 1s then check counter and increment counter
+  } else { // Time > 10s
+    stop();
+    lcd.print("Time: ");
+    lcd.print(counter);
+    lcd.setCursor(0, 1); // Move LCD Cursor to Line 2 to print "END"
+    lcd.print("END");
+    delay(10000);
+  }
+}
+// loop() END
+
+// Function to move car forward
+void moveForward() 
+{
+  analogWrite(enAB, 0.5 * 255);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+}
+
+// Function to stop car
+void stop()
+{
+  analogWrite(enAB, 0);
+}
